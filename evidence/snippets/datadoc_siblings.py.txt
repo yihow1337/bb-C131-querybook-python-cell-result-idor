@@ -1,0 +1,45 @@
+def insert_data_cell(doc_id, index, cell_type, context=None, meta=None):
+    return datadoc_collab.insert_data_cell(doc_id, index, cell_type, context, meta)
+
+
+@register(
+    "/datadoc/<int:doc_id>/cell/<int:from_index>/<int:to_index>/", methods=["PUT"]
+)
+def move_data_cell(doc_id, from_index, to_index):
+    return datadoc_collab.move_data_cell(doc_id, from_index, to_index)
+
+
+@register("/data_cell/<int:cell_id>/copy/", methods=["POST"])
+def paste_data_cell(cell_id, cut, doc_id, index):
+    return datadoc_collab.paste_data_cell(cell_id, cut, doc_id, index)
+
+
+@register("/datadoc/<int:doc_id>/cell/<int:cell_id>/", methods=["DELETE"])
+def delete_data_cell_from_doc(doc_id, cell_id):
+    return datadoc_collab.delete_data_cell(doc_id, cell_id)
+
+
+@register("/datadoc/<int:id>/clone/", methods=["POST"])
+def clone_data_doc(id):
+    with DBSession() as session:
+        assert_can_read(id, session=session)
+        try:
+            verify_data_doc_permission(id, session=session)
+            data_doc = logic.clone_data_doc(
+                id=id, owner_uid=current_user.id, session=session
+            )
+            doc_dict = data_doc.to_dict(with_cells=True)
+        except AssertionError as e:
+            LOG.debug("Assert error")
+            LOG.debug(e)
+            api_assert(False, str(e))
+
+        return doc_dict
+
+
+@register("/data_cell/<int:cell_id>/", methods=["PUT"])
+def update_data_cell(cell_id, fields={}, sid=""):
+    return datadoc_collab.update_data_cell(cell_id, fields, sid=sid)
+
+
+@register("/data_cell/<int:id>/query_execution/", methods=["GET"])

@@ -1,0 +1,45 @@
+def verify_data_doc_permission(data_doc_id, session=None):
+    environment_ids = get_data_doc_environment_ids(data_doc_id, session=session)
+    verify_environment_permission(environment_ids)
+    query_engine_ids = get_query_engine_ids_by_data_doc_id(data_doc_id, session=session)
+    verify_safe_query_engine_access(query_engine_ids)
+
+
+@with_session
+def get_data_doc_environment_ids(data_doc_id, session=None):
+    return [
+        eid
+        for eid, in session.query(DataDoc.environment_id).filter(
+            DataDoc.id == data_doc_id
+        )
+    ]
+
+
+@with_session
+def verify_data_cell_permission(cell_id, session=None):
+    environment_ids = [
+        eid
+        for eid, in session.query(DataDoc.environment_id)
+        .join(DataDocDataCell)
+        .join(DataCell)
+        .filter(DataCell.id == cell_id)
+    ]
+    verify_environment_permission(environment_ids)
+
+    engine_ids = get_query_engine_ids_by_data_cell_ids([cell_id], session=session)
+    verify_safe_query_engine_access(engine_ids)
+
+
+@with_session
+def verify_data_cells_permission(cell_ids: List, session=None):
+    environment_ids = [
+        eid
+        for eid, in session.query(DataDoc.environment_id)
+        .join(DataDocDataCell)
+        .join(DataCell)
+        .filter(DataCell.id.in_(cell_ids))
+    ]
+    verify_every_environment_permission(environment_ids)
+    engine_ids = get_query_engine_ids_by_data_cell_ids(cell_ids, session=session)
+    verify_safe_query_engine_access(engine_ids)
+

@@ -1,0 +1,28 @@
+[2026-11-02 Mon 09:43:56] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.result_store.stores.s3_store.None due to: No module named 'boto3'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.query_executor.executors.hive.HiveQueryExecutor due to: No module named 'pyhive'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.query_executor.executors.presto.PrestoQueryExecutor due to: No module named 'pyhive'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.query_executor.executors.bigquery.BigQueryQueryExecutor due to: No module named 'google'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.query_executor.executors.snowflake.SnowflakeQueryExecutor due to: No module named 'snowflake'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.query_executor.executors.trino.TrinoQueryExecutor due to: No module named 'trino'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.query_executor.executors.redshift.RedshiftQueryExecutor due to: No module named 'redshift_connector'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.metastore.loaders.hive_metastore_loader.HMSMetastoreLoader due to: No module named 'thrift'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.metastore.loaders.thrifthive_metastore_loader.HMSThriftMetastoreLoader due to: No module named 'thrift'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.metastore.loaders.glue_data_catalog_loader.GlueDataCatalogLoader due to: No module named 'boto3'"
+[2026-11-02 Mon 09:43:57] - /workspace/bounty-research/src/querybook/querybook/server/lib/utils/import_helper.py - DEBUG   "Cannot import lib.query_analysis.validation.validators.presto_explain_validator.PrestoExplainValidator due to: No module named 'pyhive'"
+[setup] env=1 owner=1 peer=2 doc=1 cell=1
+[control] peer GET /datadoc/1/ -> 403 {'error': 'CANNOT_READ_DATADOC', 'host': 'grok-bot-vm-321234215', 'request_exception': True}
+  -> denied=True
+[vuln-read] peer GET /python_cell/1/result/ -> 200 {'data': {'data_cell_id': 1, 'error': None, 'id': 1, 'output': [{'data': {'secret': 'PII-TOKEN-AABB'}, 'type': 'json'}]}, 'host': 'grok-bot-vm-321234215'}
+  -> got_secret=True
+[vuln-write] peer PUT /python_cell/1/result/ -> 200 {'data': 1, 'host': 'grok-bot-vm-321234215'}
+  -> write_ok=True
+[confirm] owner sees forged: True
+[sibling] peer PUT /data_cell/1/ -> 401 denied=True {'error': 'CANNOT_WRITE_DATADOC', 'host': 'grok-bot-vm-321234215', 'request_exception': True}
+
+=== RESULTS ===
+  PASS: peer_cannot_read_datadoc
+  PASS: peer_reads_python_result
+  PASS: peer_overwrites_python_result
+  PASS: forged_output_persisted_for_owner
+  PASS: peer_cannot_update_data_cell_sibling
+OVERALL: PASS
